@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import { data } from "./components/back/data/Data"
+import Header from './components/front/header/Header';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Routes from './components/front/Routes/Routes'
 
-function App() {
+const App = () => {
+  const { productItems } = data;
+  const [cartItems, setCartItems] = useState([])
+
+
+  const handleAddProduct = (product) => {
+    const ProductExist = cartItems.find((item) => item.id === product.id);
+    if (ProductExist) {
+      setCartItems(cartItems.map((item) => item.id === product.id ? { ...ProductExist, quantity: ProductExist.quantity + 1 } : item))
+
+    } else {
+      setCartItems([...cartItems, { ...product, qu: 1 }])
+    }
+  }
+  const handleRemoveProduct = (product) => {
+    const ProductExist = cartItems.find((item) => item.id === product.id);
+    if (ProductExist.quantity === 1) {
+      setCartItems(cartItems.filter((item) => item.id !== product.id));
+
+    } else {
+      setCartItems(cartItems.map((item) => item.id === product.id ? { ...ProductExist,quantity : ProductExist.quantity - 1 }:item))
+    }
+
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Router>
+        <Header />
+        <Routes productItems={productItems} 
+        cartItems={cartItems} 
+        handleAddProduct={handleAddProduct} 
+        handleRemoveProduct={handleRemoveProduct}/>
+      </Router>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
